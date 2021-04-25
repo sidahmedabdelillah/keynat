@@ -1,0 +1,528 @@
+</div>
+
+
+</div>
+<!-- /.container -->
+
+<!-- jQuery -->
+<sript src="js/bootstrap.min.js"></sript>
+<script src="js/jquery.js"></script>
+<script src="js/bootstrap-notify.min.js"></script>
+<script type="text/javascript">
+    function showResult(str) {
+        if (str.length == 0) {
+            document.getElementById("livesearch").innerHTML = "";
+            document.getElementById("livesearch").style.border = "0px";
+            return;
+        }
+        if (window.XMLHttpRequest) {
+            // code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp = new XMLHttpRequest();
+        } else {  // code for IE6, IE5
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("livesearch").innerHTML = this.responseText;
+                document.getElementById("livesearch").style.border = "1px solid #A5ACB2";
+            }
+        }
+        xmlhttp.open("GET", "livesearch.php?q=" + str, true);
+        xmlhttp.send();
+    }
+</script>
+<script type="text/javascript">
+
+    function vendre(article) {
+        var qte = document.getElementById('qte' + article).value;
+        var qteres = parseInt(document.getElementById('qteres' + article).innerHTML);
+        var pv = document.getElementById('prix_vente' + article).value;
+        if (qte > qteres) {
+            alert('Quantité insiffusante');
+            return;
+        }
+        $.ajax({
+            url: 'vendre.php',
+            type: 'get',
+            data: 'article=' + article + '&qte=' + qte + '&pv=' + pv,
+            success: function (output) {
+                alert('Le produit a été vendu ' + output);
+                location.reload();
+            }, error: function () {
+                alert('something went wrong, rating failed');
+            }
+        });
+
+    }
+    function ajouterVenteMaintenace(article,qte,pv){
+
+        $.ajax({
+            url: 'vente2.php',
+            type: 'get',
+            data: 'article='+article+'&qte='+qte+'&pv='+pv+'&pv2=0&pv3=0',
+            success: function(output)
+            {
+                //alert('Le produit a été ajouté'+output);
+                //location.reload();
+            }, error: function()
+            {
+                alert('something went wrong, rating failed');
+            }
+        });
+    }
+    function nouv_client() {
+        var client = document.getElementById('nouv_client').value;
+        $.ajax({
+            url: 'nouv_client.php',
+            type: 'get',
+            data: 'client=' + client,
+            success: function (output) {
+                alert('Le Client a été ajouté ' + output);
+                location.reload();
+            }, error: function () {
+                alert('something went wrong, rating failed');
+            }
+        });
+
+    }
+
+    function getInfoMaintenance(article) {
+        var cle = document.getElementById('cle'+article).value;
+        if (window.XMLHttpRequest) {
+            // code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp=new XMLHttpRequest();
+        } else { // code for IE6, IE5
+            xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange=function() {
+            if (this.readyState==4 && this.status==200) {
+                document.getElementById("spanpv").innerHTML=this.responseText;
+            }
+        }
+        xmlhttp.open("GET","articleinfor.php?maintenance&id="+cle,true);
+        xmlhttp.send();
+    }
+
+    function modifier_maintenance(id) {
+        var marque = document.getElementById('marque' + id).value;
+        var nom = document.getElementById('nom' + id).value;
+        var telephone = document.getElementById('telephone' + id).value;
+        var problem = document.getElementById('problem' + id).value;
+        var remarque = document.getElementById('remarque' + id).value;
+        var etat = document.getElementById('etat' + id).value;
+        var responsable = document.getElementById('responsable' + id).value;
+        $.ajax({
+            url: 'modifier_maintenance.php',
+            type: 'get',
+            data: 'article=' + id + '&marque=' + marque + '&nom=' + nom + '&telephone=' + telephone + '&problem=' + problem + '&remarque=' + remarque + '&etat=' + etat + '&responsable=' + responsable,
+            success: function (output) {
+                alert('Article de maintenance modifié ' + output);
+                location.reload();
+            }, error: function () {
+                alert('something went wrong, rating failed');
+            }
+        });
+
+    }
+
+    function modifier_pc_nadir(id) {
+        var marque = document.getElementById('marque' + id).value;
+        var date_ajout = document.getElementById('date_ajout' + id).value;
+        var processeur = document.getElementById('processeur' + id).value;
+        var carte_graphique = document.getElementById('carte_graphique' + id).value;
+        var ram = document.getElementById('ram' + id).value;
+        var prix = document.getElementById('prix' + id).value;
+        var dd = document.getElementById('dd' + id).value;
+        var ecran = document.getElementById('ecran' + id).value;
+        var batterie = document.getElementById('batterie' + id).value;
+        var sd = document.getElementById('sd' + id).value;
+        var sim = document.getElementById('sim' + id).value;
+        var empreinte = document.getElementById('empreinte' + id).value;
+        var poids = document.getElementById('poids' + id).value;
+        var webcam = document.getElementById('webcam' + id).value;
+        var wifi = document.getElementById('wifi' + id).value;
+        var hdmi = document.getElementById('hdmi' + id).value;
+        var vga = document.getElementById('vga' + id).value;
+        var usb = document.getElementById('usb' + id).value;
+        var couleur = document.getElementById('couleur' + id).value;
+        var etat = document.getElementById('etat' + id).value;
+        var prix_vendu = document.getElementById('prix_vendu' + id).value;
+        var date_vendu = document.getElementById('date_vendu' + id).value;
+        var date_rendu_nadir = document.getElementById('date_rendu_nadir' + id).value;
+        var obser1 = document.getElementById('obser1' + id).value;
+        $.ajax({
+            url: 'modifier_pc_nadir.php',
+            type: 'get',
+            data: 'pn=' + id + '&marque=' + marque + '&date_ajout=' + date_ajout + '&obser1=' + obser1 + '&processeur=' + processeur + '&carte_graphique=' + carte_graphique + '&ram=' + ram + '&dd=' + dd + '&ecran=' + ecran + '&batterie=' + batterie + '&sd=' + sd + '&sim=' + sim + '&empreinte=' + empreinte + '&poids=' + poids + '&webcam=' + webcam + '&wifi=' + wifi + '&hdmi=' + hdmi + '&vga=' + vga + '&usb=' + usb + '&couleur=' + couleur + '&prix=' + prix + '&etat=' + etat + '&prix_vendu=' + prix_vendu + '&date_vendu=' + date_vendu + '&date_rendu_nadir=' + date_rendu_nadir,
+            success: function (output) {
+                alert('PC Nadir modifié ' + output);
+                location.reload();
+            }, error: function () {
+                alert('something went wrong, rating failed');
+            }
+        });
+
+    }
+
+    function rendre_maintenance(id,etat) {
+        $.ajax({
+            url: 'rendre_maintenance.php',
+            type: 'get',
+            data: 'article=' + id + '&' + etat,
+            success: function (output) {
+                alert('Le produit a été rendu ' + output);
+                location.reload();
+            }, error: function () {
+                alert('something went wrong, rating failed');
+            }
+        });
+
+    }
+
+    function rendre_pc_nadir(id) {
+        $.ajax({
+            url: 'rendre_pc_nadir.php',
+            type: 'get',
+            data: 'pn=' + id,
+            success: function (output) {
+                alert('Le PC a été rendu ' + output);
+                location.reload();
+            }, error: function () {
+                alert('something went wrong, rating failed');
+            }
+        });
+
+    }
+
+    function vendre_pc_nadir(id) {
+        var prix_vendu = document.getElementById('prix_vendu' + id).value;
+        $.ajax({
+            url: 'vendre_pc_nadir.php',
+            type: 'get',
+            data: 'pn=' + id + '&prix_vendu=' + prix_vendu,
+            success: function (output) {
+                alert('Le PC a été rendu ' + output);
+                window.location = 'facture_pc_nadir.php?id=' + id
+            }, error: function () {
+                alert('something went wrong, rating failed');
+            }
+        });
+
+    }
+
+    function rendre(article) {
+        var qte = document.getElementById('qte_rendu' + article).value;
+        var pv = document.getElementById('prix_vente_' + article).value;
+        $.ajax({
+            url: 'rendre.php',
+            type: 'get',
+            data: 'article=' + article + '&qte=' + qte + '&pv=' + pv,
+            success: function (output) {
+                alert('Le produit a été rendu ' + output);
+                location.reload();
+            }, error: function () {
+                alert('something went wrong, rating failed');
+            }
+        });
+
+    }
+
+    function charge(article) {
+        var qte = document.getElementById('qte_charge' + article).value;
+        var pa = document.getElementById('prix_achat_' + article).value;
+        var remarque = document.getElementById('remarque_' + article).value;
+        $.ajax({
+            url: 'charge_op.php',
+            type: 'get',
+            data: 'article=' + article + '&qte=' + qte + '&pa=' + pa + '&remarque=' + remarque,
+            success: function (output) {
+                alert('Le produit a été chargé ' + output);
+                location.reload();
+            }, error: function () {
+                alert('something went wrong, rating failed');
+            }
+        });
+
+    }
+
+    function perte(article) {
+        var qte_perte = document.getElementById('qte_perte' + article).value;
+        $.ajax({
+            url: 'perte.php',
+            type: 'get',
+            data: 'article=' + article + '&qte=' + qte_perte,
+            success: function (output) {
+                alert('Le produit perdu déclaré ' + output);
+                location.reload();
+            }, error: function () {
+                alert('something went wrong, rating failed');
+            }
+        });
+
+    }
+
+    function defectueuse(article) {
+        var rendu = false;
+        if (document.getElementById('rendunon1').checked == true) {
+            rendu = false;
+        }
+        if (document.getElementById('renduoui1').checked == true) {
+            rendu = true;
+        }
+        var qte_defectueuse = document.getElementById('qte_defectueuse' + article).value;
+        $.ajax({
+            url: 'defectueuse.php',
+            type: 'get',
+            data: 'article=' + article + '&qte=' + qte_defectueuse + '&rendu=' + rendu,
+            success: function (output) {
+                alert('Le produit defectuex déclaré ' + output);
+                location.reload();
+            }, error: function () {
+                alert('something went wrong, rating failed');
+            }
+        });
+
+    }
+
+    function choix_four() {
+        var four = document.getElementById('fournisseur').value;
+        $.ajax({
+            url: 'choix_four.php',
+            type: 'get',
+            data: 'four=' + four,
+            success: function (output) {
+                alert('Le fournisseur a été choisi' + output);
+                window.location.replace("acheter2.php");
+            }, error: function () {
+                alert('something went wrong, rating failed');
+            }
+        });
+
+    }
+
+    function choix_client() {
+        var client = document.getElementById('client').value;
+        $.ajax({
+            url: 'choix_client.php',
+            type: 'get',
+            data: 'client=' + client,
+            success: function (output) {
+                //alert('Le client a été choisi'+output);
+                location.reload();
+            }, error: function () {
+                alert('something went wrong, rating failed');
+            }
+        });
+
+    }
+
+    function choix_f_a() {
+        var f_a = document.getElementById('facture').value;
+        $.ajax({
+            url: 'choix_facture_achat.php',
+            type: 'get',
+            data: 'f_a=' + f_a,
+            success: function (output) {
+                //alert('Le client a été choisi'+output);
+                location.reload();
+            }, error: function () {
+                alert('something went wrong, rating failed');
+            }
+        });
+
+    }
+
+    function choix_f_v() {
+        var f_v = document.getElementById('facture').value;
+        $.ajax({
+            url: 'choix_facture_vente.php',
+            type: 'get',
+            data: 'f_v=' + f_v,
+            success: function (output) {
+                //alert('Le client a été choisi'+output);
+                location.reload();
+            }, error: function () {
+                alert('something went wrong, rating failed');
+            }
+        });
+
+    }
+
+    function placer(article) {
+        var place = document.getElementById('place' + article).value;
+        $.ajax({
+            url: 'placer.php',
+            type: 'get',
+            data: 'article=' + article + '&place=' + place,
+            success: function (output) {
+                alert('Le produit a été placé ' + output);
+                location.reload();
+            }, error: function () {
+                alert('something went wrong, rating failed');
+            }
+        });
+
+    }
+
+    function modifierSeuil(article) {
+        var s1 = document.getElementById('s1_' + article).value;
+        var s2 = document.getElementById('s2_' + article).value;
+        var s3 = document.getElementById('s3_' + article).value;
+        var q1 = document.getElementById('q1_' + article).value;
+        var q2 = document.getElementById('q2_' + article).value;
+        var q3 = document.getElementById('q3_' + article).value;
+        $.ajax({
+            url: 'modifierSeuil.php',
+            type: 'get',
+            data: 'article=' + article + '&s1=' + s1 + '&s2=' + s2 + '&s3=' + s3 + '&q1=' + q1 + '&q2=' + q2 + '&q3=' + q3,
+            success: function (output) {
+                alert('le seuil a été modifié ' + output);
+                location.reload();
+            }, error: function () {
+                alert('something went wrong, rating failed');
+            }
+        });
+
+    }
+
+    function ModifierFournisseur(Fournisseur70) {
+        var Wilaya120 = document.getElementById('Wilaya80' + Fournisseur70).value;
+        
+        var Fournisseur120 = document.getElementById('Nom_Fournisseur78' + Fournisseur70).value;
+        var Telephone120 = document.getElementById('Telephone78' + Fournisseur70).value;
+        
+        var Telephone2_120 = document.getElementById('Telephone2_80' + Fournisseur70).value;
+        var prenom_120 = document.getElementById('prenom_80' + Fournisseur70).value;
+       var adress_120 = document.getElementById('adress_80' + Fournisseur70).value;
+        var obser1_120 = document.getElementById('obser1_80' + Fournisseur70).value;
+        var obser2_120 = document.getElementById('obser2_80' + Fournisseur70).value;
+        
+        
+        
+        if (Wilaya120 > 0 && Fournisseur120 == "") {
+            alert("Article non vide");
+            exit;
+        }
+        $.ajax({
+            url: 'List_FournisseurModif.php',
+            type: 'get',
+            data: 'Fournisseur200=' + Fournisseur70 + '&Wilaya200=' + Wilaya120 + '&designiation200=' + Fournisseur120 
+            + '&Telephone200=' + Telephone120
+            + '&Telephone2_200=' + Telephone2_120 + '&prenom_200=' + prenom_120 + '&adress_200=' + adress_120
+            + '&obser1_200=' + obser1_120 + '&obser2_200=' + obser2_120
+
+            ,
+
+           //                           ,
+            success: function (output) {
+                //alert('Le produit a été acheté '+output);
+                location.reload();
+            }, error: function () {
+                alert('something went wrong, rating failed');
+            }
+        });
+
+    }
+    function acheter(article) {
+        var qte_a = document.getElementById('quantite_a' + article).value;
+        var code = document.getElementById('codebar' + article).value;
+        var pa_a = document.getElementById('prix_achat_a' + article).value;
+        var pv_a = document.getElementById('prix_vente_a' + article).value;
+        var designiation_a = document.getElementById('designiation_a' + article).value;
+        var obser1 = document.getElementById('obser1_' + article).value;
+        var obser2 = document.getElementById('obser2_' + article).value;
+        if (qte_a > 0 && designiation_a == "") {
+            alert("Article non vide");
+            exit;
+        }
+        $.ajax({
+            url: 'acheter.php',
+            type: 'get',
+            data: 'article=' + article + '&quantite_a=' + qte_a + '&prix_achat_a=' + pa_a + '&prix_vente_a=' + pv_a + '&designiation=' + designiation_a + '&obser1=' + obser1 + '&obser2=' + obser2 + '&code=' + code,
+            success: function (output) {
+                //alert('Le produit a été acheté '+output);
+                location.reload();
+            }, error: function () {
+                alert('something went wrong, rating failed');
+            }
+        });
+
+    }
+</script>
+<script src="js/bootstrap.min.js"></script>
+<script>
+    function filterTable() {
+        var input, filter, input2, filter2, input3, filter3, table, tr, td, i;
+        input = document.getElementById("searchBar");
+        filter = input.value.toUpperCase();
+        input2 = document.getElementById("searchBar2");
+        filter2 = input2.value.toUpperCase();
+        input3 = document.getElementById("searchBar3");
+        filter3 = input3.value.toUpperCase();
+        table = document.getElementById("articleTable");
+        tr = table.getElementsByTagName("tr");
+
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[1];
+            if (td) {
+                if (td.innerHTML.toUpperCase().search(filter) != -1 && td.innerHTML.toUpperCase().indexOf(filter2) != -1 && td.innerHTML.toUpperCase().indexOf(filter3) != -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+    function filterTableCode() {
+        var input, filter, table, tr, td, i;
+        input = document.getElementById("searchBarCode");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("articleTable");
+        tr = table.getElementsByTagName("tr");
+
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+                if (td.innerHTML.toUpperCase().indexOf(filter) == 0) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+    function resetBtn() {
+        document.getElementById("searchBar").value = "";
+        document.getElementById("searchBar2").value = "";
+        document.getElementById("searchBar3").value = "";
+        filterTable();
+    }
+
+    $('#confirm-delete').on('show.bs.modal', function (e) {
+        $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+    });
+</script>
+
+<!-- MDB
+<script
+  type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.3.0/mdb.min.js"
+></script> -->
+<script src="js/bootstrap-4-navbar.js"></script>
+</body>
+
+</html>
+<script type="text/javascript">
+    (function ($) {
+        $(document).ready(function () {
+            $('ul.dropdown-menu [data-toggle=dropdown]').on('click', function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                $(this).parent().siblings().removeClass('open');
+                $(this).parent().toggleClass('open');
+            });
+        });
+    })(jQuery);
+</script>

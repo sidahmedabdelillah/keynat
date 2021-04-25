@@ -1,0 +1,7 @@
+SELECT * FROM `config`
+UPDATE `client` SET `n_rc`=NULL where n_rc=0;UPDATE `client` SET `n_ai`=NULL where n_ai=0;UPDATE `client` SET `n_mf`=NULL where n_mf=0;
+DELETE from inventaire WHERE article_id in (select cle from article where quantite=0);
+SELECT val+val2+val_stock+val_stock2, date, day(date),month(date) FROM caisse WHERE `caisse_id` IN ( SELECT max(`caisse_id`) FROM caisse group by date(`date`) );
+SELECT * FROM `config`
+UPDATE `client` SET `n_rc`=NULL where n_rc=0;UPDATE `client` SET `n_ai`=NULL where n_ai=0;UPDATE `client` SET `n_mf`=NULL where n_mf=0;
+DELETE from inventaire WHERE article_id in (select cle from article where quantite=0);

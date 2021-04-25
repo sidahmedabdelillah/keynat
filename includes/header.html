@@ -1,0 +1,538 @@
+<?php
+@session_start();
+?>
+<!DOCTYPE html>
+<html lang="en">
+<?php
+/*if (@$_SERVER['HTTPS']!="on") {
+  if($_SERVER['HTTP_HOST']=='192.168.1.2'){
+        $redirect= "https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+        header("Location:$redirect");
+
+    }
+}*/
+require_once('connect_hanout.php');
+require_once('config.php');
+if(isset($_SESSION['client_id'])AND !isset($_SESSION['v_id'])){
+  session_destroy();
+  header("location:login.php");
+}
+if(isset($_GET['month'])){
+  $month=$_GET['month'];
+}else{
+  $month=date('m');
+}
+$caisse=getCaisseInfo();
+$config=getConfig();
+?>
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>
+    <?php if(isset($page_title)){echo $page_title;}else{echo NOM;} ?>
+  </title>
+
+  <!-- Bootstrap Core CSS -->
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/bootstrap-4-navbar.css" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link href="css/blog-post.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/chartist.min.css">
+  <link rel="stylesheet" href="dist/chartist-plugin-tooltip.css">
+  <!-- include the style -->
+  <link rel="stylesheet" href="dist/css/iziToast.min.css">
+  <!-- include a theme -->
+  <link rel="stylesheet" href="css/themes/default.min.css" />
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+  <!-- MDB -->
+
+  <style media="screen">
+    @font-face {
+      font-family: 'Glyphicons Halflings';
+      src: url(../fonts/glyphicons-halflings-regular.eot);
+    }
+
+    tr,
+    th {
+      text-align: center;
+    }
+
+    .form-actions {
+      margin: 0;
+      background-color: transparent;
+      text-align: center;
+    }
+
+    .caret-right {
+      border-bottom: 4px solid transparent;
+      border-top: 4px solid transparent;
+      border-left: 4px solid;
+      display: inline-block;
+      height: 0;
+      opacity: 0.3;
+      vertical-align: top;
+      width: 0;
+    }
+  </style>
+  <style>
+    .toprint {
+      display: none;
+    }
+
+    @media print {
+      .nottoprint {
+        display: none;
+      }
+
+      .desrow {
+        width: 40%;
+      }
+
+      .toprint {
+        display: block;
+      }
+
+      td {
+        height: 10px;
+      }
+
+      tr:nth-child(odd) {
+        background: red !important
+      }
+    }
+
+    em {
+      color: red;
+    }
+
+    [data-notify="progressbar"] {
+      margin-bottom: 0px;
+      position: absolute;
+      bottom: 0px;
+      left: 0px;
+      width: 100%;
+      height: 5px;
+    }
+
+    .dropdown-submenu {
+      position: relative;
+    }
+
+    .dropdown-submenu .dropdown-menu {
+      top: 0;
+      left: 100%;
+      margin-top: -1px;
+    }
+
+    .dropdown-submenu {
+      position: relative;
+    }
+
+    .dropdown-submenu>.dropdown-menu {
+      top: 0;
+      left: 100%;
+      margin-top: -6px;
+      margin-left: -1px;
+      -webkit-border-radius: 0 6px 6px 6px;
+      -moz-border-radius: 0 6px 6px;
+      border-radius: 0 6px 6px 6px;
+    }
+
+    .dropdown-submenu:hover>.dropdown-menu {
+      display: block;
+    }
+
+    .dropdown-submenu>a:after {
+      display: block;
+      content: " ";
+      float: right;
+      width: 0;
+      height: 0;
+      border-color: transparent;
+      border-style: solid;
+      border-width: 5px 0 5px 5px;
+      border-left-color: #ccc;
+      margin-top: 5px;
+      margin-right: -10px;
+    }
+
+    .dropdown-submenu:hover>a:after {
+      border-left-color: #fff;
+    }
+
+    .dropdown-submenu.pull-left {
+      float: none;
+    }
+
+    .dropdown-submenu.pull-left>.dropdown-menu {
+      left: -100%;
+      margin-left: 10px;
+      -webkit-border-radius: 6px 0 6px 6px;
+      -moz-border-radius: 6px 0 6px 6px;
+      border-radius: 6px 0 6px 6px;
+    }
+
+
+
+    /* NEW MENU CSS */
+
+    .multilevel-accordion-menu .is-accordion-submenu-parent a {
+      background: #4d5158;
+    }
+
+    .multilevel-accordion-menu .is-accordion-submenu a {
+      background: #35383d;
+    }
+
+    .multilevel-accordion-menu .sublevel-1 {
+      text-indent: 1rem;
+    }
+
+    .multilevel-accordion-menu .sublevel-2 {
+      text-indent: 2rem;
+    }
+
+    .multilevel-accordion-menu .sublevel-3 {
+      text-indent: 3rem;
+    }
+
+    .multilevel-accordion-menu .sublevel-4 {
+      text-indent: 4rem;
+    }
+
+    .multilevel-accordion-menu .sublevel-5 {
+      text-indent: 5rem;
+    }
+
+    .multilevel-accordion-menu .sublevel-6 {
+      text-indent: 6rem;
+    }
+
+    .multilevel-accordion-menu a {
+      color: #fefefe;
+      box-shadow: inset 0 -1px #41444a;
+    }
+
+    .multilevel-accordion-menu a::after {
+      border-color: #fefefe transparent transparent;
+    }
+
+    .multilevel-accordion-menu .menu>li:not(.menu-text)>a {
+      padding: 1.2rem 1rem;
+    }
+
+    .multilevel-accordion-menu .is-accordion-submenu-parent[aria-expanded='true'] a.subitem::before {
+      content: '\f016';
+      font-family: FontAwesome;
+      margin-right: 1rem;
+    }
+
+    .multilevel-accordion-menu .is-accordion-submenu-parent[aria-expanded='true'] a::before {
+      content: '\f07c';
+      font-family: FontAwesome;
+      margin-right: 1rem;
+    }
+
+    .multilevel-accordion-menu .is-accordion-submenu-parent[aria-expanded='false'] a::before {
+      content: '\f07b';
+      font-family: FontAwesome;
+      margin-right: 1rem;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-inverse navbar-fixed-top marginBottom-0" role="navigation">
+    <div class="container">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.php" accesskey="K" title="Alt + K">
+          <?= NOM ?>
+        </a>
+
+      </div>
+      <?php
+            if (isset($_SESSION['prenom'])){
+              require_once('includes/notifications.php');
+            ?>
+
+
+      <div class="collapse navbar-collapse" id="navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Acceuil <b
+                class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="1_8marge.php" title="Alt + K">1_8 Acceuil avec marge et quantite >0</a></li>
+              <li><a href="index.php" title="Alt + K">1_10Acceuil quantite >0</a></li>
+              <li><a href="zero.php" accesskey="Z">1_20Acceuil + Article quantite 0 (Alt + Z)</a></li>
+              <li><a href="1_24SearchCategorie.php" accesskey="Z">1_24Recherche par categorie</a></li>
+              <li class="divider"></li>
+              <li><a href="vide.php">1_30Espace Vide Seulement</a></li>
+              <li><a href="article_fournisseur.php" accesskey="a" title="Alt + A">1_40Articles Fournisseur</a></li>
+            </ul>
+          </li>
+          <li id="venteLiVente"><a href="vente.php" accesskey="V" title="Alt + V">Vente <span id="nombreDesVentes"
+                class="label label-primary">
+                <?php
+                              $vendeur=$_SESSION['v_id'];
+                              $q="select * from vente_temp where v_id=$vendeur;";
+                              $r=mysqli_query($dbc,$q);
+                              echo @mysqli_num_rows($r);
+                              ?>
+                </spna></a></li>
+          <?php if($_SESSION['type']<>1){?>
+          <li><a href="inventaire.php" accesskey="I" title="Alt + I">Inventaire <span class="label label-danger">
+                <?= getNbrInventaire() ?>
+              </span></a></li>
+          <li><a href="#">Gains <span class="label label-success">
+                <?php
+                              if($_SESSION['type']==3){
+                                echo number_format(calculerGainVendeur2($vendeur,$month),0);
+                              }else{
+                                echo number_format(calculerGainVendeur($vendeur,$month),0);
+                              }  ?>
+              </span></a></li>
+          <?php
+                  }?>
+          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Les Actions <b
+                class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="backup.php" accesskey="S">Sauvegarde (Alt + S)</a></li>
+              <li><a href="inventaire.php" accesskey="I" title="Alt + I">Inventaire (Alt + I) <span
+                    class="label label-danger">
+                    <?= getNbrInventaire() ?>
+                  </span></a></li>
+
+
+
+              <li class="dropdown dropdown-submenu"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Achat et
+                  Commandes</a>
+                <ul class="dropdown-menu">
+                  <li><a href="acheter2.php">Achat code Article</a></li>
+                  <li><a href="20_30_4acheter2.php">Achat code Fournisseur</a></li>
+                  <li><a href="20_30_20commandeDateCode.php">Les Commandes à faire </a></li>
+
+                </ul>
+              </li>
+
+
+
+              <li><a href="rendu.php" accesskey="R">Rendu (Alt + R)</a></li>
+              <li><a href="caisse.php" accesskey="C" title="Alt + C">Vérifier la caisse (Alt + C)</a></li>
+              <li><a href="declarer_perte.php">Déclarer Perte</a></li>
+              <li><a href="versement.php">Versement</a></li>
+              <li><a href="commande.php">Les Commandes à faire</a></li>
+              <li><a href="commandeDate.php">Les Commandes à faire avec date</a></li>
+              <li><a href="commandeDateCode.php">Les Commandes à faire avec date&CodeF</a></li>
+              <li><a href="8_14commande.php">Les Commandes des seuils</a></li>
+              <li class="divider"></li>
+              <li class="dropdown dropdown-submenu"><a href="#" class="dropdown-toggle"
+                  data-toggle="dropdown">20_90Articles</a>
+                <ul class="dropdown-menu">
+                  <li><a href="20_90_8modofi_marge_gain_interval.php">20_90_8modofi_marge_gain_interval</a></li>
+                  <li><a href="ajouter_article.php">Ajouter Article</a></li>
+                  <li><a href="20_90_14ModifCleArtiAffichage.php">14Modif Cle Artic Affichage</a></li>
+                  <li><a href="modifier.php">Modifier Article</a></li>
+                  <li><a href="20_90_20ModifierArticleCategorie.php">Modifier categorie tous les Article </a></li>
+                  <li><a href="20_90_21ModifierArticleCategorie.php">Modifier categorie Article sup zero</a></li>
+
+                  <li><a href="List_Fournisseur.php">List Fournisseur et Modifier </a></li>
+                  <li><a href="modifier_des.php">Modifier Article 2</a></li>
+                  <li><a href="changer_place.php">Changer de place</a></li>
+                  <li><a href="modifier_codebar.php">Modifier Codebar</a></li>
+                  <li><a href="modifier_code.php">Modifier Code</a></li>
+                  <li><a href="modifier_image.php">Modifier Photo</a></li>
+                  <li><a href="editSeuil.php">Modifier Seuils</a></li>
+                </ul>
+              </li>
+              <?php if($_SESSION['type']==1){?>
+              <li class="divider"></li>
+              <li class="dropdown dropdown-submenu"><a href="#" class="dropdown-toggle"
+                  data-toggle="dropdown">Administration</a>
+                <ul class="dropdown-menu">
+                  <li><a href="charge.php">Les Charges</a></li>
+                  <li><a href="ajouter_fournisseur.php">Ajouter Fournisseur</a></li>
+                  <li><a href="ajouter_client.php">Ajouter Client</a></li>
+                  <li><a href="perte_temp.php">Pertes Temporaires</a></li>
+                  <li><a href="caisser.php">Modifier la Caisse</a></li>
+                  <li><a href="ajouter_gain.php">Modifier les gains</a></li>
+                  <li><a href="somme2.php">Calculer le stock</a></li>
+                  <li><a href="somme.php">Calculer le stock +0</a></li>
+                  <li><a href="list_vendeur.php">Gestion des vendeurs</a></li>
+                </ul>
+              </li>
+              <li class="divider"></li>
+              <li><a href="les_gains.php" accesskey="G" title="Alt + G">Les Gains à Enlever (Alt + G)</a></li>
+              <?php
+                        }?>
+            </ul>
+          </li>
+
+          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Historique <b
+                class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="list_client.php">Liste des Clients</a></li>
+              <li><a href="verfication_mois.php">Historique vérification de caisse</a></li>
+              <li><a href="historique_changement_place.php">Historique Changement de place</a></li>
+              <li class="divider"></li>
+              <li class="dropdown dropdown-submenu"><a href="#" class="dropdown-toggle"
+                  data-toggle="dropdown">30_32Historiques</a>
+                <ul class="dropdown-menu">
+                  <li><a href="30_32_10historique_vente.php">Historique Vente total</a></li>
+                  <li><a href="30_32_12histo_vente_seui2.php">Historique Vente seuil2</a></li>
+                  <li><a href="historique_achat.php">Historique Achat</a></li>
+                  <li><a href="historique_perdu.php">Historique Perdu</a></li>
+                  <li><a href="historique_rendu.php">Historique Rendu</a></li>
+                  <li><a href="historique_charge.php">Historique Charge</a></li>
+                  <li><a href="historique_vente2.php">Historique Vente + gain</a></li>
+                  <li><a href="historique_rendu2.php">Historique Rendu + gain</a></li>
+
+
+                </ul>
+              </li>
+
+
+
+
+
+              <li><a href="codebar_eviter.php">Codebar à éviter</a></li>
+              <li><a href="list_non_conformite.php?etat=En%20Attente">Non Conformite</a></li>
+              <li><a href="historique_vente.php">Historique Vente</a></li>
+              <li><a href="historique_achat.php">Historique Achat</a></li>
+              <li><a href="historique_perdu.php">Historique Perdu</a></li>
+              <li><a href="historique_rendu.php">Historique Rendu</a></li>
+              <li><a href="historique_charge.php">Historique Charge</a></li>
+              <li><a href="facture_achat.php">Facture Achat</a></li>
+
+            </ul>
+          </li>
+
+          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Maintenance <span
+                class="label label-warning">
+                <?= getNbrEnAttente(); ?>
+              </span><b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="ajouter_maintenance.php">Ajouter Maintenance</a></li>
+              <li><a href="list_maintenance.php?etat=En%20Attente" accesskey="M" title="Alt + M">Liste des Maintenance
+                  (Alt + M)</a></li>
+              <li><a href="list_maintenance2.php?etat=En%20Attente">Liste des Maintenance (ancienne)</a></li>
+
+            </ul>
+          </li>
+          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">PCs<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="ajouter_pc_nadir.php">Ajouter PC</a></li>
+              <li><a href="list_pc_nadir.php?etat=EnVente" accesskey="P">Liste des PC (Alt + P)</a></li>
+            </ul>
+          </li>
+          <?php if($_SESSION['type']==1){?>
+          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Stats<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="sta.php">Statistique</a></li>
+              <li><a href="meilleur_four.php">Meilleur Fournisseur</a></li>
+              <li><a href="gain_vendeur.php">Gain des Vendeurs</a></li>
+              <li><a href="60.30gain_vendeurBetween.php">Gain des Vendeurs entre 2 dates</a></li>
+
+
+              <li><a href="problem.php">Les Problems à résoudre</a></li>
+            </ul>
+          </li>
+          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Caisse<b
+                class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Caisse Informatique
+                  <?= getCaisseInfo()['val'] ?>
+                </a></li>
+
+              <li class="divider"></li>
+              <li class="dropdown dropdown-submenu"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Recap</a>
+                <ul class="dropdown-menu">
+                  <li><a href="70_1_10Vente_Vendeur.php">Vente par Vendeur</a></li>
+                  <li><a href="70_1_11Perte_Vendeur.php">Perte par Vendeur</a></li>
+                  <li><a href="70_1_12Gains_Vendeur.php">Gains par Vendeur</a></li>
+                </ul>
+              </li>
+
+
+
+
+
+
+              <li><a href="#">Caisse Téléphonie
+                  <?= getCaisseInfo()['val2'] ?>
+                </a></li>
+              <li><a href="#">Gain du mois
+                  <?= getGainTotal($month) ?>
+                </a></li>
+              <li><a href="#">Gain Aujourd'hui
+                  <?= getGainToday($month) ?>
+                </a></li>
+              <li><a href="caisse_stock.php?informatique">Stock Informatique
+                  <?= getCaisseInfo()['val_stock'] ?>
+                </a></li>
+              <li><a href="caisse_stock.php?telephonie">Stock Téléphonie
+                  <?= getCaisseInfo()['val_stock2'] ?>
+                </a></li>
+              <li><a href="caisse_stock.php">Stock Total
+                  <?= getCaisseInfo()['val_stock']+getCaisseInfo()['val_stock2'] ?>
+                </a></li>
+              <li><a href="#">Capital Informatique
+                  <?= getCaisseInfo()['val']+getCaisseInfo()['val_stock'] ?>
+                </a></li>
+              <li><a href="#">Capital Téléphonie
+                  <?= getCaisseInfo()['val2']+getCaisseInfo()['val_stock2'] ?>
+                </a></li>
+              <li><a href="#">Capital Total
+                  <?= getCaisseInfo()['val']+getCaisseInfo()['val_stock']+getCaisseInfo()['val2']+getCaisseInfo()['val_stock2'] ?>
+                </a></li>
+            </ul>
+          </li>
+          <?php
+                  }?>
+
+          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"> Categorie <b
+                class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="ajoute_categorie.php" title="Alt + K"> ajouté des categorie </a></li>
+              <li><a href="gerer_categorie.php" title="Alt + K"> modifier les categorie </a></li>
+            </ul>
+          </li>
+          <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <?= $_SESSION['prenom'] ?><b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a href="logout.php">Se Déconnecter</a></li>
+            </ul>
+          </li>
+
+
+        </ul>
+      </div>
+      <?php }?>
+      <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+  </nav>
+
+  <!-- Page Content -->
+  <div class="container" style="width:100%;">
+    <div class="row" class="nottoprint"><br class="nottoprint"> <br class="nottoprint">
