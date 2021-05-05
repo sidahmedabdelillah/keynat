@@ -3,9 +3,14 @@ $page_title="Se Connecter";
 require_once('includes/function_inc.php');
 require_once('includes/header.html');
 require_once('connect_hanout.php');
+
+
+
 if(isset($_POST['nom'])AND(isset($_POST['password']))){
     check_login($_POST['nom'],$_POST['password']);
 }
+
+
 ?>
 
 <div class="col-md-10 col-md-offset-1" style="margin-top:200px;">

@@ -25,17 +25,20 @@ if (isset($_POST['submitted'])) {
         $parent = $_POST['parent'] ;
         $q = "INSERT INTO categorie ( categorie ,  level  , parent ) VALUES ('$categorie' , '$level' , '$parent');";
     }
+
     
 
     addToLog($q);
     $r = mysqli_query($dbc, $q);
+    echo $q ;
     if ($r) {
          echo "<script>alert('categorie ajouter $categorie');</script>";
      } else {
         $err = mysqli_error($dbc) ;
-         echo mysqli_error($dbc);
-     }
+        echo "<script>alert('categorie ajouter $err ');</script>";
 
+     }
+if(isset($_POST["img"])){
      $target_dir = "img/img_categorie/";
      $target_file = $target_dir . basename($_FILES["img"]["name"]);
      $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
@@ -64,7 +67,7 @@ if (isset($_POST['submitted'])) {
       echo "The file ". htmlspecialchars( basename( $_FILES["img"]["name"])). " has been uploaded.";
     } else {
       echo "Sorry, there was an error uploading your file.";
-    }
+    }}
   }
 }
 include('includes/header.html');
@@ -76,7 +79,7 @@ include('includes/header.html');
 <div class="col-md-10 col-md-offset-1">
 
 
-    <form class="form-horizontal" method="post" action="ajoute_categorie.php" enctype="multipart/form-data"> 
+    <form class="form-horizontal" method="post" action="ajoute_categorie.php" enctype="multipart/form-data">
         <div class="form-group">
             <label class="control-label col-md-2" for="four">Categorie:</label>
             <div class="col-md-9">
@@ -110,7 +113,7 @@ include('includes/header.html');
         <div class="form-group">
             <div class="col-sm-offset-2 col-md-9">
                 <input type="hidden" name="submitted" value="TRUE">
-                <button type="submit" class="btn btn-default">Ajoute Categorie </button>
+                <button type="submit" class="btn btn-default"> Ajoute Categorie </button>
             </div>
         </div>
     </form>
@@ -140,7 +143,7 @@ function change() {
     selectElement.empty()
     $.each(selected, function(index, cat) {
         $('#parent').append($('<option/>', {
-            value: cat.cle,
+            value: cat.cat_id,
             text: cat.categorie
         }));
     });

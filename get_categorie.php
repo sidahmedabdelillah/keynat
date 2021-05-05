@@ -1,11 +1,6 @@
 <?php
 session_start();
-if (!isset($_SESSION['prenom'])) {
-    $url = $_SERVER['REQUEST_URI'];
-  ?><script type="text/javascript">
-location.href = 'login.php?continue=<?= $url ?>';
-</script><?php
-}
+
 require_once('includes/function_inc.php') ;
 // siPermis($_SESSION['type'], basename(__FILE__, '.php'));
 require_once('connect_hanout.php') ;
@@ -18,18 +13,26 @@ if(isset($_POST["submited"])){
     $parent = $_POST['parent'] ;
     $cle = $_POST["cle"] ;
     
-    $querry = "UPDATE categorie SET level = $level , categorie = '$categorie' , parent = $parent WHERE cle = $cle " ;
-    echo $querry ;
+    $querry = "UPDATE categorie SET level = $level , categorie = '$categorie' , parent = $parent WHERE cat_id = $cle " ;
     $r = mysqli_query($dbc , $querry) ;
-    
+    if($r){
+        echo "success" ;
+    }else{
+        echo "failed" ;
+    }
+    die();
+}
+if(isset($_POST["setimg"])){
 
-    // FILE UPLOAD
 
+    $cle = $_POST["cle"] ;
     $target_dir = "img/img_categorie/";
     $target_file = $target_dir . basename($_FILES["img"]["name"]);
     $uploadOk = 1;
     $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
     $target_file = $target_dir . $cle . "." . $imageFileType ;
+
+
 
     
    // Check file size
@@ -58,7 +61,7 @@ if(isset($_POST["submited"])){
  
 }else if(isset($_GET["delete"])){
     $cle = $_GET["cle"] ;
-    $q = "DELETE FROM categorie WHERE cle =$cle " ;
+    $q = "DELETE FROM categorie WHERE cat_id =$cle " ;
     echo $q ;
     $r = mysqli_query($dbc , $q) ;
 }else{
@@ -86,18 +89,18 @@ if(is_numeric($_GET["niveau"])){
     foreach($categories as $cat){
         ?>
     <tr>
-        <td><?= $cat["cle"]?></td>
+        <td><?= $cat["cat_id"]?></td>
         <td><?= $cat["categorie"] ?></td>
         <td><?= $cat["level"] ?></td>
         <td>
             <button type="button" class="btn btn-primary btn-md" data-toggle="modal"
-                data-target="#dialog<?= $cat['cle'] ?>">Modifier
+                data-target="#dialog<?= $cat['cat_id'] ?>">Modifier
             </button>
         </td>
     </tr>
 
 
-    <div class="modal fade" id="dialog<?= $cat['cle'] ?>" role="dialog" tabindex="-1">
+    <div class="modal fade" id="dialog<?= $cat['cat_id'] ?>" role="dialog" tabindex="-1">
         <div class="modal-dialog">
 
             <!-- Modal content-->
@@ -109,29 +112,31 @@ if(is_numeric($_GET["niveau"])){
                     <ul class="list-group">
                         Categorie :
                         <li class="list-group-item">
-                            <input type="text" id="categorie<?= $cat['cle'] ?>" value="<?= $cat["categorie"]?>"
+                            <input type="text" id="categorie<?= $cat['cat_id'] ?>" value="<?= $cat["categorie"]?>"
                                 class="form-control">
                         </li>
                         Level :
                         <li class="list-group-item">
-                            <input type="number" id="level<?= $cat['cle'] ?>" value="<?= $cat["level"] ?>"
+                            <input type="number" id="level<?= $cat['cat_id'] ?>" value="<?= $cat["level"] ?>"
                                 class="form-control">
                         </li>
                         Parent :
                         <li class="list-group-item">
-                            <input type="number" id="parent<?= $cat['cle'] ?>" value="<?= $cat["level"] ?>"
+                            <input type="number" id="parent<?= $cat['cat_id'] ?>" value="<?= $cat["level"] ?>"
                                 class="form-control">
                         </li>
                         <li class="list-group-item">
-                            <input name="img" type="file" id="img<?= $cat['cle'] ?>" 
-                                class="form-control-file">
+                            <input name="img" type="file" id="img<?= $cat['cat_id'] ?>" class="form-control-file">
                         </li>
                     </ul>
                 </div>
                 <div class="modal-footer">
-                    <button onClick="modif( <?= $cat['cle'] ?>)" type="submit" class="btn btn-success"
+                    <button onClick="modif( <?= $cat['cat_id'] ?>)" type="submit" class="btn btn-success"
                         style="float:left;"> Modifier </button>
-                    <button onClick="suprimerCategorie( <?= $cat['cle'] ?>)" type="submit" class="btn btn-danger"
+
+                    <button type="button" class="btn btn-primary" style="float:left;"
+                        onclick="modifImg(<?= $cat['cat_id'] ?>)">Update Image</button>
+                    <button onClick="suprimerCategorie( <?= $cat['cat_id'] ?>)" type="submit" class="btn btn-danger"
                         style="float:left;"> Supprimer </button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
                 </div>

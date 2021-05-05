@@ -74,6 +74,33 @@ function getCategorie() {
     xmlhttp.send();
 }
 
+function modifImg(cat) {
+    const categorie = document.getElementById('categorie' + cat).value;
+    var fd = new FormData();
+    var files = $(`#img${cat}`)[0].files;
+    console.log(files)
+    // Check file selected or not
+    if (files.length > 0) {
+        fd.append('img', files[0]);
+        fd.append('setimg', true)
+        fd.append("cle", cat)
+
+        $.ajax({
+            url: 'get_categorie.php',
+            type: 'post',
+            data: fd,
+            contentType: false,
+            processData: false,
+            success: function(output) {
+                alert(output);
+            },
+            error: function(r) {
+                alert(r);
+            }
+        });
+    }
+}
+
 function modif(cat){
     const categorie = document.getElementById('categorie' + cat).value ;
     var level = parseInt(document.getElementById('level' + cat).value);
@@ -81,14 +108,17 @@ function modif(cat){
     var fd = new FormData();
     var files = $(`#img${cat}`)[0].files;
 
+
     // Check file selected or not
     if(files.length > 0 ){
-    fd.append('img',files[0]);}
+    fd.append('img',files[0]);
+    }
     fd.append('categorie' , categorie)
     fd.append('level' , level)
     fd.append('parent' , parent)
     fd.append('cle' , cat)
     fd.append('submited' , true)
+    console.log(fd.get("img"))
     $.ajax({
       url: 'get_categorie.php',
       type: 'post',
@@ -115,8 +145,8 @@ getCategorie()
               success: function (output) {
                   alert("categorie suprimer");
                   console.log(output)
-              },error: function () {
-                  alert('erreur ');
+              },error: function (r) {
+                  alert(r);
               }
           });
           $(`#dialog${cat}`).modal('toggle')
